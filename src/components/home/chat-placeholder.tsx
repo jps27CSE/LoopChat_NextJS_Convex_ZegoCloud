@@ -15,7 +15,10 @@ const ChatPlaceHolder = () => {
           download the Windows app.
         </p>
 
-        <Button className="rounded-full my-5 bg-green-primary hover:bg-green-secondary">
+        <Button
+          className="rounded-full my-5 bg-green-primar
+        y hover:bg-green-secondary"
+        >
           Get from Microsoft Store
         </Button>
       </div>
