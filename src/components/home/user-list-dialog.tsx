@@ -16,6 +16,7 @@ import { ImageIcon, MessageSquareDiff } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
+import toast from "react-hot-toast";
 
 const UserListDialog = () => {
   const [selectedUsers, setSelectedUsers] = useState<Id<"users">[]>([]);
@@ -67,7 +68,8 @@ const UserListDialog = () => {
       setGroupName("");
       setSelectedImage(null);
     } catch (error) {
-      console.error(error);
+      toast.error("Failed to create conversation");
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
