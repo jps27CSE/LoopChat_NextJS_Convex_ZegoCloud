@@ -8,19 +8,12 @@ const ChatPlaceHolder = () => {
       <div className="flex flex-col items-center w-full justify-center py-10 gap-4">
         <Image src={"/desktop-hero.png"} alt="Hero" width={320} height={188} />
         <p className="text-3xl font-extralight mt-5 mb-2">
-          Download LoopChat for Windows
+          Seamless Communication Anywhere
         </p>
         <p className="w-1/2 text-center text-gray-primary text-sm text-muted-foreground">
-          Make calls, share your screen and get a faster experience when you
-          download the Windows app.
+          Connect, collaborate, and share effortlessly through our cloud-based
+          platform. No downloads required—access it from any device.
         </p>
-
-        <Button
-          className="rounded-full my-5 bg-green-primar
-        y hover:bg-green-secondary"
-        >
-          Get from Microsoft Store
-        </Button>
       </div>
       <p className="w-1/2 mt-auto text-center text-gray-primary text-xs text-muted-foreground flex items-center justify-center gap-1">
         <Lock size={10} /> Your personal messages are end-to-end encrypted
