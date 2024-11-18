@@ -30,6 +30,7 @@ export const createConversation = mutation({
     let groupImage;
 
     if (args.groupImage) {
+      groupImage = (await ctx.storage.getUrl(args.groupImage)) as string;
     }
 
     const conversationId = await ctx.db.insert("conversations", {
@@ -42,4 +43,8 @@ export const createConversation = mutation({
 
     return conversationId;
   },
+});
+
+export const generateUploadUrl = mutation(async (ctx) => {
+  return await ctx.storage.generateUploadUrl();
 });
