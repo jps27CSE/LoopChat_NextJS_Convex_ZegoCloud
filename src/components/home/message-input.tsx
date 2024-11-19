@@ -7,7 +7,7 @@ import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
 import toast from "react-hot-toast";
 import useComponentVisible from "@/hooks/useComponentVisible";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 
 const MessageInput = () => {
   const [msgText, setMsgText] = useState("");
@@ -19,14 +19,14 @@ const MessageInput = () => {
 
   const handleSendTextMsg = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    sendTextMsg({
-      content: msgText,
-      conversation: selectedConversation!._id,
-      sender: me!._id,
-    });
 
-    setMsgText("");
     try {
+      sendTextMsg({
+        content: msgText,
+        conversation: selectedConversation!._id,
+        sender: me!._id,
+      });
+      setMsgText("");
     } catch (error: any) {
       toast.error(error.message);
       console.log(error);
@@ -39,7 +39,20 @@ const MessageInput = () => {
         {/* EMOJI PICKER WILL GO HERE */}
         <div ref={ref} onClick={() => setIsComponentVisible(true)}>
           <Laugh className="text-gray-600 dark:text-gray-400" />
-          {isComponentVisible && <EmojiPicker />}
+          {isComponentVisible && (
+            <EmojiPicker
+              theme={Theme.DARK}
+              style={{
+                position: "absolute",
+                bottom: "1.5rem",
+                left: "1rem",
+                zIndex: 50,
+              }}
+              onEmojiClick={(emojiObject) => {
+                setMsgText((prev) => prev + emojiObject.emoji);
+              }}
+            />
+          )}
         </div>
         <Plus className="text-gray-600 dark:text-gray-400" />
       </div>
