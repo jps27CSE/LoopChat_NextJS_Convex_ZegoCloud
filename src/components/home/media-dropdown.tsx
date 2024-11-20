@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -56,6 +57,37 @@ const MediaDropdown = ({}) => {
     } catch (error) {
       toast.error("Failed to send message");
       console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendVideo = async () => {
+    setIsLoading(true);
+    try {
+      const postUrl = await generateUploadUrl();
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": selectedVideo!.type,
+        },
+        body: selectedVideo,
+      });
+
+      const { storageId } = await result.json();
+
+      await sendVideo({
+        videoId: storageId,
+        conversation: selectedConversation!._id,
+        sender: me!._id,
+      });
+
+      setSelectedVideo(null);
+    } catch (error) {
+      toast.error("Failed to send video");
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -93,7 +125,7 @@ const MediaDropdown = ({}) => {
           onClose={() => setSelectedVideo(null)}
           selectedVideo={selectedVideo}
           isLoading={isLoading}
-          // handleSendVideo={handleSendVideo}
+          handleSendVideo={handleSendVideo}
         />
       )}
 
@@ -150,6 +182,7 @@ const MediaImageDialog = ({
       }}
     >
       <DialogContent>
+        <DialogTitle className="sr-only">Image</DialogTitle>
         <DialogDescription className="flex flex-col gap-10 justify-center items-center">
           {renderedImage && (
             <Image
@@ -199,6 +232,7 @@ const MediaVideoDialog = ({
       }}
     >
       <DialogContent>
+        <DialogTitle className="sr-only">Video</DialogTitle>
         <DialogDescription>Video</DialogDescription>
         <div className="w-full">
           {renderedVideo && (

@@ -4,6 +4,14 @@ import ChatBubbleAvatar from "@/components/home/chat-bubble-avatar";
 import DateIndicator from "@/components/home/date-indicator";
 import Image from "next/image";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import ReactPlayer from "react-player";
+import { render } from "react-dom";
 
 type ChatBubbleProps = {
   message: IMessage;
@@ -31,6 +39,22 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 
   const [open, setOpen] = useState(false);
 
+  const renderMessageCount = () => {
+    switch (message.messageType) {
+      case "text":
+        return <TextMessage message={message} />;
+      case "image":
+        return (
+          <ImageMessage message={message} handleClick={() => setOpen(true)} />
+        );
+      case "video":
+        return <VideoMessage message={message} />;
+
+      default:
+        return null;
+    }
+  };
+
   if (!fromMe) {
     return (
       <>
@@ -46,11 +70,13 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
             className={`flex flex-col z-20 max-w-fit px-2  pt-1 rounded-md shadow-md relative ${bgClass}`}
           >
             <OtherMessageIndicator />
-            {message.messageType === "text" && (
-              <TextMessage message={message} />
-            )}
-            {message.messageType === "image" && (
-              <ImageMessage message={message} />
+            {renderMessageCount()}
+            {open && (
+              <ImageDialog
+                src={message.content}
+                open={open}
+                onClose={() => setOpen(false)}
+              />
             )}
             <MessageTime time={time} fromMe={fromMe} />
           </div>
@@ -67,9 +93,13 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
           className={`flex z-20 max-w-fit px-2  pt-1 rounded-md shadow-md relative ml-auto ${bgClass}`}
         >
           <SelfMessageIndicator />
-          {message.messageType === "text" && <TextMessage message={message} />}
-          {message.messageType === "image" && (
-            <ImageMessage message={message} />
+          {renderMessageCount()}
+          {open && (
+            <ImageDialog
+              src={message.content}
+              open={open}
+              onClose={() => setOpen(false)}
+            />
           )}
           <MessageTime time={time} fromMe={fromMe} />
         </div>
@@ -78,6 +108,18 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
   );
 };
 export default ChatBubble;
+
+const VideoMessage = ({ message }: { message: IMessage }) => {
+  return (
+    <ReactPlayer
+      url={message.content}
+      width="250px"
+      height="250px"
+      controls={true}
+      light={true}
+    />
+  );
+};
 
 const ImageMessage = ({
   message,
@@ -96,6 +138,37 @@ const ImageMessage = ({
         onClick={handleClick}
       />
     </div>
+  );
+};
+
+const ImageDialog = ({
+  src,
+  onClose,
+  open,
+}: {
+  open: boolean;
+  src: string;
+  onClose: () => void;
+}) => {
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
+      <DialogContent className="min-w-[750px]">
+        <DialogTitle className="sr-only">Image Preview</DialogTitle>
+        <DialogDescription className="relative h-[450px] flex justify-center">
+          <Image
+            src={src}
+            fill
+            className="rounded-lg object-contain"
+            alt="image"
+          />
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 };
 
