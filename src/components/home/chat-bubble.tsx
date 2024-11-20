@@ -2,6 +2,8 @@ import { IMessage, useConversationStore } from "@/store/chat-store";
 import { MessageSeenSvg } from "@/lib/svgs";
 import ChatBubbleAvatar from "@/components/home/chat-bubble-avatar";
 import DateIndicator from "@/components/home/date-indicator";
+import Image from "next/image";
+import { useState } from "react";
 
 type ChatBubbleProps = {
   message: IMessage;
@@ -27,6 +29,8 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
       ? "bg-white dark:bg-gray-primary"
       : "bg-blue-500 text-white";
 
+  const [open, setOpen] = useState(false);
+
   if (!fromMe) {
     return (
       <>
@@ -42,7 +46,12 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
             className={`flex flex-col z-20 max-w-fit px-2  pt-1 rounded-md shadow-md relative ${bgClass}`}
           >
             <OtherMessageIndicator />
-            <TextMessage message={message} />
+            {message.messageType === "text" && (
+              <TextMessage message={message} />
+            )}
+            {message.messageType === "image" && (
+              <ImageMessage message={message} />
+            )}
             <MessageTime time={time} fromMe={fromMe} />
           </div>
         </div>
@@ -58,7 +67,10 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
           className={`flex z-20 max-w-fit px-2  pt-1 rounded-md shadow-md relative ml-auto ${bgClass}`}
         >
           <SelfMessageIndicator />
-          <TextMessage message={message} />
+          {message.messageType === "text" && <TextMessage message={message} />}
+          {message.messageType === "image" && (
+            <ImageMessage message={message} />
+          )}
           <MessageTime time={time} fromMe={fromMe} />
         </div>
       </div>
@@ -66,6 +78,26 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
   );
 };
 export default ChatBubble;
+
+const ImageMessage = ({
+  message,
+  handleClick,
+}: {
+  message: IMessage;
+  handleClick: () => void;
+}) => {
+  return (
+    <div className="w-[250px] h-[250px] m-2 relative">
+      <Image
+        src={message.content}
+        fill
+        className="cursor-pointer object-cover rounded"
+        alt="image"
+        onClick={handleClick}
+      />
+    </div>
+  );
+};
 
 const MessageTime = ({ time, fromMe }: { time: string; fromMe: boolean }) => {
   return (
