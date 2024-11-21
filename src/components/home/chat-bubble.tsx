@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import ReactPlayer from "react-player";
 import { render } from "react-dom";
+import ChatAvatarActions from "@/components/home/chat-avatar-actions";
 
 type ChatBubbleProps = {
   message: IMessage;
@@ -70,6 +71,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
             className={`flex flex-col z-20 max-w-fit px-2  pt-1 rounded-md shadow-md relative ${bgClass}`}
           >
             <OtherMessageIndicator />
+            {isGroup && <ChatAvatarActions message={message} me={me} />}
             {renderMessageCount()}
             {open && (
               <ImageDialog
