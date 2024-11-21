@@ -17,8 +17,10 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
     message.sender._id,
   );
   const kickUser = useMutation(api.conversations.kickUser);
+  const createConversation = useMutation(api.conversations.createConversation);
 
-  const handleKickUser = async () => {
+  const handleKickUser = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!selectedConversation) return;
 
     try {
@@ -39,8 +41,32 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
     }
   };
 
+  const handleCreateConversation = async () => {
+    try {
+      const conversationId = await createConversation({
+        isGroup: false,
+        participants: [me._id, message.sender._id],
+      });
+
+      setSelectedConversation({
+        _id: conversationId,
+        name: message.sender.name,
+        participants: [me._id, message.sender._id],
+        isGroup: false,
+        isOnline: message.sender.isOnline,
+        image: message.sender.image,
+      });
+    } catch (error) {
+      toast.error("Failed to create conversation");
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="text-[11px] flex gap-4 justify-between font-bold cursor-pointer group">
+    <div
+      className="text-[11px] flex gap-4 justify-between font-bold cursor-pointer group"
+      onClick={handleCreateConversation}
+    >
       {message.sender.name}
       {!isMember && <Ban size={16} className="text-red-500" />}
       {isMember && selectedConversation?.admin === me._id && (
