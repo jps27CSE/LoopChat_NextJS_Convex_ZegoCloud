@@ -47,6 +47,7 @@ CONVEX_DEPLOYMENT=
 
 ```bash
 npm run dev
+npx convex dev
 ```
 
 ## Screenshots
